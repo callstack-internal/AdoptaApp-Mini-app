@@ -26,11 +26,9 @@ function DogDetailsScreen() {
   if (!route.params || !route.params.dog) {
     console.error('No dog data in route params');
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Error: No se pudo cargar la información del perro</Text>
-        </View>
-      </SafeAreaView>
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Error: No se pudo cargar la información del perro</Text>
+      </View>
     );
   }
 
@@ -83,76 +81,74 @@ function DogDetailsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Image source={{ uri: dog.foto }} style={styles.image} resizeMode="cover" />
+    <ScrollView>
+      <Image source={{ uri: dog.foto }} style={styles.image} resizeMode="cover" />
 
-        <View style={styles.infoContainer}>
-          <Text style={styles.name}>{dog.nombre}</Text>
-          <Text style={styles.breed}>{dog.raza}</Text>
-          <Text style={styles.age}>{ageText}</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.name}>{dog.nombre}</Text>
+        <Text style={styles.breed}>{dog.raza}</Text>
+        <Text style={styles.age}>{ageText}</Text>
 
-          {dog.distancia != null && (
-            <View style={styles.distanceContainer}>
-              <Text style={styles.distanceText}>A {dog.distancia} km de tu ubicación</Text>
-            </View>
-          )}
+        {dog.distancia != null && (
+          <View style={styles.distanceContainer}>
+            <Text style={styles.distanceText}>A {dog.distancia} km de tu ubicación</Text>
+          </View>
+        )}
 
-          <View style={styles.divider} />
+        <View style={styles.divider} />
 
-          <View style={styles.statusContainer}>
-            <View
-              style={[
-                styles.statusBadge,
-                adoptable ? styles.adoptableBadge : styles.notAdoptableBadge,
-              ]}
-            >
-              <Text style={styles.statusText}>
-                {adoptable ? 'Disponible para adopción' : 'No adoptable aún'}
-              </Text>
-            </View>
-
-            {!adoptable && 'motivo' in dog && (
-              <Text style={styles.reasonText}>
-                Motivo: {dog.motivo === 'enfermo' ? 'Está enfermo' : 'Es muy joven'}
-              </Text>
-            )}
-
-            {!adoptable && 'fechaDisponible' in dog && (
-              <Text style={styles.availableText}>
-                Disponible a partir de: {dog.fechaDisponible}
-              </Text>
-            )}
+        <View style={styles.statusContainer}>
+          <View
+            style={[
+              styles.statusBadge,
+              adoptable ? styles.adoptableBadge : styles.notAdoptableBadge,
+            ]}
+          >
+            <Text style={styles.statusText}>
+              {adoptable ? 'Disponible para adopción' : 'No adoptable aún'}
+            </Text>
           </View>
 
-          <View style={styles.divider} />
-
-          <Text style={styles.sectionTitle}>Sobre {dog.nombre}</Text>
-          <Text style={styles.description}>
-            {dog.nombre} es un perro de raza {dog.raza?.toLowerCase()}
-            {dog.edad ? ` de ${dog.edad} ${dog.edad === 1 ? 'año' : 'años'}` : ''}. Es un compañero
-            leal y cariñoso que busca un hogar donde pueda recibir todo el amor que merece.
-          </Text>
-
-          <TouchableOpacity
-            style={[
-              styles.adoptButton,
-              !adoptable || alreadyAdopted ? styles.disabledButton : null,
-            ]}
-            onPress={handleAdopt}
-            disabled={!adoptable || alreadyAdopted}
-          >
-            <Text style={styles.adoptButtonText}>
-              {alreadyAdopted
-                ? 'Ya has adoptado a este perro'
-                : adoptable
-                  ? 'Adoptar'
-                  : 'No disponible para adopción'}
+          {!adoptable && 'motivo' in dog && (
+            <Text style={styles.reasonText}>
+              Motivo: {dog.motivo === 'enfermo' ? 'Está enfermo' : 'Es muy joven'}
             </Text>
-          </TouchableOpacity>
+          )}
+
+          {!adoptable && 'fechaDisponible' in dog && (
+            <Text style={styles.availableText}>
+              Disponible a partir de: {dog.fechaDisponible}
+            </Text>
+          )}
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        <View style={styles.divider} />
+
+        <Text style={styles.sectionTitle}>Sobre {dog.nombre}</Text>
+        <Text style={styles.description}>
+          {dog.nombre} es un perro de raza {dog.raza?.toLowerCase()}
+          {dog.edad ? ` de ${dog.edad} ${dog.edad === 1 ? 'año' : 'años'}` : ''}. Es un compañero
+          leal y cariñoso que busca un hogar donde pueda recibir todo el amor que merece.
+        </Text>
+
+        <TouchableOpacity
+          style={[
+            styles.adoptButton,
+            !adoptable || alreadyAdopted ? styles.disabledButton : null,
+          ]}
+          onPress={handleAdopt}
+          disabled={!adoptable || alreadyAdopted}
+        >
+          <Text style={styles.adoptButtonText}>
+            {alreadyAdopted
+              ? 'Ya has adoptado a este perro'
+              : adoptable
+                ? 'Adoptar'
+                : 'No disponible para adopción'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 

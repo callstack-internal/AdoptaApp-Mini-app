@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import DogCard from '../components/DogCard';
 import { useAdoption } from '../context/AdoptionContext';
 import { PerroConEstado } from '../types/dog';
@@ -23,7 +22,7 @@ function AdoptedDogsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#f8f9fa" />
 
       <View style={styles.header}>
@@ -38,7 +37,7 @@ function AdoptedDogsScreen() {
         ListEmptyComponent={renderEmptyList}
         showsVerticalScrollIndicator={false}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -5,12 +5,9 @@ import DogList from '../components/DogList';
 
 function HomeScreen() {
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
-      <View style={styles.container} testID="home-screen-container">
-        <DogList />
-      </View>
-    </SafeAreaView>
-
+    <View style={styles.container} testID="home-screen-container">
+      <DogList />
+    </View>
   );
 }
 
