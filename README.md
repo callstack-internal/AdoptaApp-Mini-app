@@ -1,0 +1,1 @@
+# AdoptaApp-Mini-app
