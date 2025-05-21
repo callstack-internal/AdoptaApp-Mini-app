@@ -6,7 +6,8 @@
     "android": "react-native run-android --no-packager",
     "ios": "react-native run-ios --no-packager",
     "lint": "eslint .",
-    "start": "react-native start --port 8081",
+    "start": "STANDALONE=0 react-native start --port 9005",
+    "start:standalone": "STANDALONE=1 react-native start --port 8081",
     "pods": "(cd ios && bundle install && bundle exec pod install)",
     "pods:update": "(cd ios && bundle exec pod update)"
   },
