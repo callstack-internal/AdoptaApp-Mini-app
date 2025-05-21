@@ -7,8 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import { useAdoption } from '../context/AdoptionContext';
 import { PerroConEstado } from '../types/dog';
@@ -146,8 +146,8 @@ function DogDetailsScreen() {
               {alreadyAdopted
                 ? 'Ya has adoptado a este perro'
                 : adoptable
-                ? 'Adoptar'
-                : 'No disponible para adopción'}
+                  ? 'Adoptar'
+                  : 'No disponible para adopción'}
             </Text>
           </TouchableOpacity>
         </View>
