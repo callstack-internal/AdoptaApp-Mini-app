@@ -10,11 +10,13 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import Location from '@mrsasuu/react-native-location';
+
 import { obtenerPerros } from '../services/dogService';
 import { PerroConEstado } from '../types/dog';
 import DogCard from './DogCard';
 import { calculateDistance } from '../utils/dogUtils';
-import Location from '../../modules/LocationModule/src';
+
 
 /**
  * DogList component displays a searchable list of dogs
@@ -86,6 +88,7 @@ function DogList() {
 
   // Request location permission and get current location
   const requestLocationAndFetchDogs = useCallback(async () => {
+
     try {
       const permissionStatus = await Location.requestPermission();
 
