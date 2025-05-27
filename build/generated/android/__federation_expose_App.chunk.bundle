@@ -1,0 +1,1941 @@
+(self["webpackChunkadopta_app"] = self["webpackChunkadopta_app"] || []).push([["__federation_expose_App"], {
+"./src/navigation/constants.ts": 
+/*!*************************************!*\
+  !*** ./src/navigation/constants.ts ***!
+  \*************************************/
+(function (__unused_webpack_module, exports) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "Screens", ({
+    enumerable: true,
+    get: function() {
+        return Screens;
+    }
+}));
+var Screens = {
+    Main: {
+        title: "Cat\xe1logo de Perros",
+        name: 'Main'
+    },
+    HowItWorks: {
+        title: "C\xf3mo funciona",
+        name: 'HowItWorks'
+    },
+    Home: {
+        title: 'Home',
+        name: 'Home'
+    },
+    DogDetails: {
+        title: 'Detalles',
+        name: 'DogDetails'
+    },
+    Adoptar: {
+        title: 'Adoptar',
+        name: 'Adoptar'
+    },
+    MisPerros: {
+        title: 'Mis Perros',
+        name: 'MisPerros'
+    }
+};
+
+
+}),
+"./src/services/apiClient.ts": 
+/*!***********************************!*\
+  !*** ./src/services/apiClient.ts ***!
+  \***********************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "fetchJson", ({
+    enumerable: true,
+    get: function() {
+        return fetchJson;
+    }
+}));
+var _async_to_generator = __webpack_require__(/*! @swc/helpers/_/_async_to_generator */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_async_to_generator.cjs");
+function fetchJson(url) {
+    return _async_to_generator._(function*() {
+        var response = yield fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })();
+}
+
+
+}),
+"./src/services/dogService.ts": 
+/*!************************************!*\
+  !*** ./src/services/dogService.ts ***!
+  \************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "obtenerPerros", ({
+    enumerable: true,
+    get: function() {
+        return obtenerPerros;
+    }
+}));
+var _async_to_generator = __webpack_require__(/*! @swc/helpers/_/_async_to_generator */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_async_to_generator.cjs");
+var _object_spread = __webpack_require__(/*! @swc/helpers/_/_object_spread */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_object_spread.cjs");
+var _object_spread_props = __webpack_require__(/*! @swc/helpers/_/_object_spread_props */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_object_spread_props.cjs");
+var _apiClient = __webpack_require__(/*! ./apiClient */ "./src/services/apiClient.ts");
+// Default center coordinates (can be adjusted based on user location)
+var DEFAULT_CENTER = {
+    latitude: 40.416775,
+    longitude: -3.70379
+};
+/**
+ * Generates a random location within a specified radius from a center point
+ * @param center - The center coordinates
+ * @param radiusKm - The radius in kilometers
+ * @returns Random coordinates within the radius
+ */ function generateRandomLocation(ref, ref1) {
+    var center = ref === void 0 ? DEFAULT_CENTER : ref, radiusKm = ref1 === void 0 ? 10 : ref1;
+    // Earth's radius in kilometers
+    var earthRadius = 6371;
+    // Convert radius from kilometers to radians
+    var radiusInRadian = radiusKm / earthRadius;
+    // Generate a random distance within the radius
+    var randomDistance = Math.random() * radiusInRadian;
+    // Generate a random angle in radians
+    var randomAngle = Math.random() * Math.PI * 2;
+    // Calculate the random latitude and longitude
+    var lat = Math.asin(Math.sin(center.latitude * Math.PI / 180) * Math.cos(randomDistance) + Math.cos(center.latitude * Math.PI / 180) * Math.sin(randomDistance) * Math.cos(randomAngle)) * 180 / Math.PI;
+    var lng = (center.longitude * Math.PI / 180 + Math.atan2(Math.sin(randomAngle) * Math.sin(randomDistance) * Math.cos(center.latitude * Math.PI / 180), Math.cos(randomDistance) - Math.sin(center.latitude * Math.PI / 180) * Math.sin(lat * Math.PI / 180))) * 180 / Math.PI;
+    return {
+        latitude: lat,
+        longitude: lng
+    };
+}
+// API URL for fetching random dog images
+var DOG_API_URL = 'https://dog.ceo/api/breeds/image/random/10';
+// List of dog names for random assignment
+var DOG_NAMES = [
+    'Firulais',
+    'Max',
+    'Rocky',
+    'Luna',
+    'Toby',
+    'Bella',
+    'Coco',
+    'Thor',
+    'Nina',
+    'Simba'
+];
+/**
+ * Extracts the breed name from a dog image URL
+ * @param url - The dog image URL from the API
+ * @returns The breed name in a readable format
+ */ function extractBreedFromUrl(url) {
+    var _parts_breedIndex;
+    var parts = url.split('/');
+    var breedIndex = parts.findIndex((p)=>p === 'breeds') + 1;
+    // Format the breed name by replacing hyphens with spaces and capitalizing
+    var breedName = ((_parts_breedIndex = parts[breedIndex]) === null || _parts_breedIndex === void 0 ? void 0 : _parts_breedIndex.split('-').join(' ')) || 'desconocida';
+    return breedName.charAt(0).toUpperCase() + breedName.slice(1);
+}
+/**
+ * Generates a random dog name from the predefined list
+ * @returns A random dog name
+ */ function randomName() {
+    return DOG_NAMES[Math.floor(Math.random() * DOG_NAMES.length)];
+}
+/**
+ * Generates a random age for a dog between 1 and 15 years
+ * @returns A random age
+ */ function randomAge() {
+    return Math.floor(Math.random() * 15) + 1;
+}
+/**
+ * Randomly determines if a dog should be marked as not adoptable
+ * @param perro - The dog object to potentially mark as not adoptable
+ * @returns Either the original dog or a dog with non-adoptable properties
+ */ function assignAdoptionStatus(perro) {
+    // 30% chance of a dog being not adoptable
+    if (Math.random() < 0.3) {
+        var motivo = Math.random() < 0.5 ? 'enfermo' : 'muy joven';
+        // Generate a future date for availability (1-30 days from now)
+        var daysToAdd = Math.floor(Math.random() * 30) + 1;
+        var futureDate = new Date();
+        futureDate.setDate(futureDate.getDate() + daysToAdd);
+        return _object_spread_props._(_object_spread._({}, perro), {
+            motivo,
+            fechaDisponible: futureDate.toISOString().split('T')[0]
+        });
+    }
+    return perro;
+}
+function obtenerPerros() {
+    return _async_to_generator._(function*() {
+        try {
+            var data = yield (0, _apiClient.fetchJson)(DOG_API_URL);
+            // Transform API data into dog objects with random properties
+            return data.message.map((url)=>{
+                var perro = {
+                    nombre: randomName(),
+                    raza: extractBreedFromUrl(url),
+                    foto: url,
+                    edad: randomAge(),
+                    ubicacion: generateRandomLocation()
+                };
+                // Randomly assign adoption status
+                return assignAdoptionStatus(perro);
+            });
+        } catch (error) {
+            console.error('Error fetching dogs:', error);
+            throw new Error('Failed to fetch dogs from the API');
+        }
+    })();
+}
+
+
+}),
+"./src/utils/dogUtils.ts": 
+/*!*******************************!*\
+  !*** ./src/utils/dogUtils.ts ***!
+  \*******************************/
+(function (__unused_webpack_module, exports) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+}
+_export(exports, {
+    get calculateDistance () {
+        return calculateDistance;
+    },
+    get esAdoptable () {
+        return esAdoptable;
+    },
+    get mostrarInfoPerro () {
+        return mostrarInfoPerro;
+    }
+});
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    // Earth's radius in kilometers
+    var R = 6371;
+    // Convert latitude and longitude from degrees to radians
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    // Haversine formula
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var distance = R * c; // Distance in kilometers
+    return parseFloat(distance.toFixed(2)); // Round to 2 decimal places
+}
+function mostrarInfoPerro(perro) {
+    return `${perro.nombre} es de raza ${perro.raza}`;
+}
+function esAdoptable(perro) {
+    // A dog is not adoptable if it has a 'motivo' property
+    return !('motivo' in perro);
+}
+
+
+}),
+"./src/AppContent.tsx": 
+/*!****************************!*\
+  !*** ./src/AppContent.tsx ***!
+  \****************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _reactnativesafeareacontext = __webpack_require__(/*! react-native-safe-area-context */ "webpack/sharing/consume/default/react-native-safe-area-context/react-native-safe-area-context");
+var _DrawerNavigatortsx = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ./navigation/navigators/DrawerNavigator.tsx */ "./src/navigation/navigators/DrawerNavigator.tsx"));
+var _AdoptionContexttsx = __webpack_require__(/*! ./context/AdoptionContext.tsx */ "./src/context/AdoptionContext.tsx");
+function AppContent() {
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnativesafeareacontext.SafeAreaProvider, {
+        children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_AdoptionContexttsx.AdoptionProvider, {
+            children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_DrawerNavigatortsx.default, {})
+        })
+    });
+}
+var _default = AppContent;
+
+
+}),
+"./src/components/DogCard.tsx": 
+/*!************************************!*\
+  !*** ./src/components/DogCard.tsx ***!
+  \************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _interop_require_wildcard = __webpack_require__(/*! @swc/helpers/_/_interop_require_wildcard */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_wildcard.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_wildcard._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _reactnative = __webpack_require__(/*! react-native */ "webpack/sharing/consume/default/react-native/react-native");
+var _native = __webpack_require__(/*! @react-navigation/native */ "webpack/sharing/consume/default/@react-navigation/native/@react-navigation/native");
+var _dogUtilsts = __webpack_require__(/*! ../utils/dogUtils.ts */ "./src/utils/dogUtils.ts");
+var _constantsts = __webpack_require__(/*! ../navigation/constants.ts */ "./src/navigation/constants.ts");
+/**
+ * DogCard component displays information about a single dog
+ */ var DogCard = /*#__PURE__*/ _react.default.memo(function DogCard(ref) {
+    var perro = ref.perro;
+    // Get navigation
+    var navigation = (0, _native.useNavigation)();
+    // Get dog information and adoption status
+    var info = (0, _react.useMemo)(()=>(0, _dogUtilsts.mostrarInfoPerro)(perro), [
+        perro
+    ]);
+    var adoptable = (0, _react.useMemo)(()=>(0, _dogUtilsts.esAdoptable)(perro), [
+        perro
+    ]);
+    // Get dog age display text
+    var ageText = (0, _react.useMemo)(()=>{
+        if (!perro.edad) {
+            return 'Edad desconocida';
+        }
+        return perro.edad === 1 ? "1 a\xf1o" : `${perro.edad} a\xf1os`;
+    }, [
+        perro.edad
+    ]);
+    // Handle press on the dog card
+    var handlePress = ()=>{
+        navigation.navigate(_constantsts.Screens.DogDetails.name, {
+            dog: perro
+        });
+    };
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.TouchableOpacity, {
+        style: styles.cardContainer,
+        activeOpacity: 0.9,
+        onPress: handlePress,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+            style: styles.card,
+            children: [
+                /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Image, {
+                    source: {
+                        uri: perro.foto
+                    },
+                    style: styles.image,
+                    resizeMode: "cover"
+                }),
+                /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                    style: styles.infoContainer,
+                    children: [
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                            style: styles.name,
+                            children: perro.nombre
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                            style: styles.breed,
+                            children: perro.raza
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                            style: styles.age,
+                            children: ageText
+                        }),
+                        perro.distancia && /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                            style: styles.distanceContainer,
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.Text, {
+                                    style: styles.distanceText,
+                                    children: [
+                                        "A ",
+                                        perro.distancia,
+                                        " km de tu ubicaci\xf3n"
+                                    ]
+                                }),
+                                perro.distancia < 1 && /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                    style: styles.nearbyBadge,
+                                    children: "\xa1Cercano a ti!"
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+                            style: styles.divider
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                            style: styles.statusContainer,
+                            children: [
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                    style: styles.infoText,
+                                    children: info
+                                }),
+                                /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+                                    style: [
+                                        styles.statusBadge,
+                                        adoptable ? styles.adoptableBadge : styles.notAdoptableBadge
+                                    ],
+                                    children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                        style: styles.statusText,
+                                        children: adoptable ? "Disponible para adopci\xf3n" : "No adoptable a\xfan"
+                                    })
+                                }),
+                                !adoptable && 'motivo' in perro && /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.Text, {
+                                    style: styles.reasonText,
+                                    children: [
+                                        "Motivo: ",
+                                        perro.motivo === 'enfermo' ? "Est\xe1 enfermo" : 'Es muy joven'
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    });
+});
+// No need for Dimensions since we're using relative sizing
+var styles = _reactnative.StyleSheet.create({
+    cardContainer: {
+        marginBottom: 16,
+        borderRadius: 12,
+        backgroundColor: '#ffffff',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+        overflow: 'hidden'
+    },
+    card: {
+        flexDirection: 'column',
+        borderRadius: 12
+    },
+    image: {
+        width: '100%',
+        height: 200,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12
+    },
+    infoContainer: {
+        padding: 16
+    },
+    name: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#212529',
+        marginBottom: 4
+    },
+    breed: {
+        fontSize: 16,
+        color: '#495057',
+        marginBottom: 4,
+        textTransform: 'capitalize'
+    },
+    age: {
+        fontSize: 14,
+        color: '#6c757d',
+        marginBottom: 8
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#e9ecef',
+        marginVertical: 12
+    },
+    statusContainer: {
+        marginTop: 4
+    },
+    infoText: {
+        fontSize: 15,
+        color: '#495057',
+        marginBottom: 12
+    },
+    statusBadge: {
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+        alignSelf: 'flex-start',
+        marginBottom: 8
+    },
+    adoptableBadge: {
+        backgroundColor: '#d4edda'
+    },
+    notAdoptableBadge: {
+        backgroundColor: '#f8d7da'
+    },
+    statusText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#212529'
+    },
+    reasonText: {
+        fontSize: 14,
+        color: '#dc3545',
+        marginTop: 4,
+        fontStyle: 'italic'
+    },
+    distanceContainer: {
+        marginTop: 4,
+        flexDirection: 'row',
+        alignItems: 'center',
+        flexWrap: 'wrap'
+    },
+    distanceText: {
+        fontSize: 14,
+        color: '#0066cc',
+        fontWeight: '500'
+    },
+    nearbyBadge: {
+        fontSize: 12,
+        color: '#ffffff',
+        backgroundColor: '#28a745',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 10,
+        marginLeft: 8,
+        overflow: 'hidden'
+    }
+});
+var _default = DogCard;
+
+
+}),
+"./src/components/DogList.tsx": 
+/*!************************************!*\
+  !*** ./src/components/DogList.tsx ***!
+  \************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _async_to_generator = __webpack_require__(/*! @swc/helpers/_/_async_to_generator */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_async_to_generator.cjs");
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _interop_require_wildcard = __webpack_require__(/*! @swc/helpers/_/_interop_require_wildcard */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_wildcard.cjs");
+var _object_spread = __webpack_require__(/*! @swc/helpers/_/_object_spread */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_object_spread.cjs");
+var _object_spread_props = __webpack_require__(/*! @swc/helpers/_/_object_spread_props */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_object_spread_props.cjs");
+var _sliced_to_array = __webpack_require__(/*! @swc/helpers/_/_sliced_to_array */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_sliced_to_array.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_wildcard._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _reactnative = __webpack_require__(/*! react-native */ "webpack/sharing/consume/default/react-native/react-native");
+var _reactnativelocation = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! @mrsasuu/react-native-location */ "webpack/sharing/consume/default/@mrsasuu/react-native-location/@mrsasuu/react-native-location"));
+var _dogService = __webpack_require__(/*! ../services/dogService */ "./src/services/dogService.ts");
+var _DogCard = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ./DogCard */ "./src/components/DogCard.tsx"));
+var _dogUtils = __webpack_require__(/*! ../utils/dogUtils */ "./src/utils/dogUtils.ts");
+/**
+ * DogList component displays a searchable list of dogs
+ */ function DogList() {
+    // State management
+    var _useState = _sliced_to_array._((0, _react.useState)([]), 2), perros = _useState[0], setPerros = _useState[1];
+    var _useState1 = _sliced_to_array._((0, _react.useState)(''), 2), busqueda = _useState1[0], setBusqueda = _useState1[1];
+    var _useState2 = _sliced_to_array._((0, _react.useState)(true), 2), isLoading = _useState2[0], setIsLoading = _useState2[1];
+    var _useState3 = _sliced_to_array._((0, _react.useState)(null), 2), error = _useState3[0], setError = _useState3[1];
+    var _useState4 = _sliced_to_array._((0, _react.useState)(null), 2), userLocation = _useState4[0], setUserLocation = _useState4[1];
+    var _useState5 = _sliced_to_array._((0, _react.useState)(false), 2), isRefreshing = _useState5[0], setIsRefreshing = _useState5[1];
+    // Function to fetch dogs and calculate distances if user location is available
+    var fetchDogs = (0, _react.useCallback)((ref)=>{
+        var refreshing = ref === void 0 ? false : ref;
+        return _async_to_generator._(function*() {
+            try {
+                if (!refreshing) {
+                    setIsLoading(true);
+                } else {
+                    setIsRefreshing(true);
+                }
+                var dogsData = yield (0, _dogService.obtenerPerros)();
+                // If user location is available, calculate distance for each dog
+                if (userLocation) {
+                    var dogsWithDistance = dogsData.map((dog)=>{
+                        if (dog.ubicacion) {
+                            var distance = (0, _dogUtils.calculateDistance)(userLocation.latitude, userLocation.longitude, dog.ubicacion.latitude, dog.ubicacion.longitude);
+                            return _object_spread_props._(_object_spread._({}, dog), {
+                                distancia: distance
+                            });
+                        }
+                        return dog;
+                    });
+                    // Sort dogs by distance (closest first)
+                    dogsWithDistance.sort((a, b)=>{
+                        if (!a.distancia) {
+                            return 1;
+                        }
+                        if (!b.distancia) {
+                            return -1;
+                        }
+                        return a.distancia - b.distancia;
+                    });
+                    setPerros(dogsWithDistance);
+                } else {
+                    setPerros(dogsData);
+                }
+                setError(null);
+            } catch (err) {
+                setError('Error al cargar los perros. Intente nuevamente.');
+            } finally{
+                setIsLoading(false);
+                setIsRefreshing(false);
+            }
+        })();
+    }, [
+        userLocation
+    ]);
+    // Request location permission and get current location
+    var requestLocationAndFetchDogs = (0, _react.useCallback)(()=>_async_to_generator._(function*() {
+            try {
+                var permissionStatus = yield _reactnativelocation.default.requestPermission();
+                if (permissionStatus === 'granted') {
+                    var location = yield _reactnativelocation.default.getCurrentLocation();
+                    setUserLocation({
+                        latitude: location.latitude,
+                        longitude: location.longitude
+                    });
+                    // Fetch dogs again with the new location
+                    yield fetchDogs();
+                } else {
+                    _reactnative.Alert.alert('Permiso denegado', "No se pudo acceder a la ubicaci\xf3n. Algunas funciones estar\xe1n limitadas.", [
+                        {
+                            text: 'OK'
+                        }
+                    ]);
+                }
+            } catch (err) {
+                console.error('Error getting location:', err);
+                _reactnative.Alert.alert('Error', "No se pudo obtener la ubicaci\xf3n. Por favor, int\xe9ntalo de nuevo.", [
+                    {
+                        text: 'OK'
+                    }
+                ]);
+            }
+        })(), [
+        fetchDogs
+    ]);
+    // Fetch dogs on component mount
+    (0, _react.useEffect)(()=>{
+        fetchDogs();
+    }, [
+        fetchDogs
+    ]);
+    // Filter dogs based on search term
+    var perrosFiltrados = (0, _react.useMemo)(()=>{
+        return perros.filter((perro)=>perro.nombre.toLowerCase().includes(busqueda.toLowerCase()));
+    }, [
+        perros,
+        busqueda
+    ]);
+    // Handle search input changes
+    var handleSearchChange = (0, _react.useCallback)((text)=>{
+        setBusqueda(text);
+    }, []);
+    // Render each dog card
+    var renderDogCard = (0, _react.useCallback)((ref)=>{
+        var item = ref.item;
+        return /*#__PURE__*/ (0, _jsxruntime.jsx)(_DogCard.default, {
+            perro: item
+        });
+    }, []);
+    // Extract unique key for each item
+    var keyExtractor = (0, _react.useCallback)((item, index)=>`${item.nombre}-${index}`, []);
+    // Render empty list component
+    var renderEmptyList = (0, _react.useCallback)(()=>/*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+            style: styles.emptyContainer,
+            children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                style: styles.emptyText,
+                children: busqueda ? 'No se encontraron perros con ese nombre' : 'No hay perros disponibles'
+            })
+        }), [
+        busqueda
+    ]);
+    return /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+        style: styles.container,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.StatusBar, {
+                barStyle: "dark-content",
+                backgroundColor: "#f8f9fa"
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                style: styles.header,
+                children: [
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                        style: styles.title,
+                        children: "Hola desde el taller Hola hola"
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.TextInput, {
+                        style: styles.searchInput,
+                        placeholder: "Buscar por nombre",
+                        placeholderTextColor: "#6c757d",
+                        onChangeText: handleSearchChange,
+                        value: busqueda
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                        style: styles.buttonContainer,
+                        children: [
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.TouchableOpacity, {
+                                style: styles.button,
+                                onPress: ()=>fetchDogs(true),
+                                children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                    style: styles.buttonText,
+                                    children: "Refrescar Perros"
+                                })
+                            }),
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.TouchableOpacity, {
+                                style: [
+                                    styles.button,
+                                    styles.locationButton
+                                ],
+                                onPress: requestLocationAndFetchDogs,
+                                children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                    style: styles.buttonText,
+                                    children: userLocation ? "Actualizar Ubicaci\xf3n" : "Obtener Ubicaci\xf3n"
+                                })
+                            })
+                        ]
+                    }),
+                    userLocation && /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                        style: styles.locationText,
+                        children: "Mostrando perros ordenados por cercan\xeda a tu ubicaci\xf3n"
+                    })
+                ]
+            }),
+            isLoading ? /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                style: styles.loadingContainer,
+                children: [
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.ActivityIndicator, {
+                        size: "large",
+                        color: "#0066cc"
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                        style: styles.loadingText,
+                        children: "Cargando perros..."
+                    })
+                ]
+            }) : error ? /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+                style: styles.errorContainer,
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                    style: styles.errorText,
+                    children: error
+                })
+            }) : /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.FlatList, {
+                data: perrosFiltrados,
+                keyExtractor: keyExtractor,
+                renderItem: renderDogCard,
+                contentContainerStyle: styles.listContent,
+                ListEmptyComponent: renderEmptyList,
+                showsVerticalScrollIndicator: false,
+                refreshing: isRefreshing,
+                onRefresh: ()=>fetchDogs(true)
+            })
+        ]
+    });
+}
+var styles = _reactnative.StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f8f9fa'
+    },
+    header: {
+        padding: 16,
+        backgroundColor: '#ffffff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e9ecef',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 12,
+        color: '#212529'
+    },
+    searchInput: {
+        height: 46,
+        borderWidth: 1,
+        borderColor: '#ced4da',
+        borderRadius: 8,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        backgroundColor: '#ffffff',
+        color: '#212529',
+        marginBottom: 16
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 12
+    },
+    button: {
+        backgroundColor: '#0066cc',
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        flex: 1,
+        marginRight: 8,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    locationButton: {
+        backgroundColor: '#28a745',
+        marginRight: 0,
+        marginLeft: 8
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontWeight: '600',
+        fontSize: 14
+    },
+    locationText: {
+        fontSize: 14,
+        color: '#28a745',
+        marginTop: 8,
+        textAlign: 'center',
+        fontStyle: 'italic'
+    },
+    listContent: {
+        padding: 12,
+        paddingBottom: 24
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    loadingText: {
+        marginTop: 12,
+        fontSize: 16,
+        color: '#6c757d'
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24
+    },
+    errorText: {
+        fontSize: 16,
+        color: '#dc3545',
+        textAlign: 'center'
+    },
+    emptyContainer: {
+        padding: 24,
+        alignItems: 'center'
+    },
+    emptyText: {
+        fontSize: 16,
+        color: '#6c757d',
+        textAlign: 'center'
+    }
+});
+var _default = DogList;
+
+
+}),
+"./src/context/AdoptionContext.tsx": 
+/*!*****************************************!*\
+  !*** ./src/context/AdoptionContext.tsx ***!
+  \*****************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+}
+_export(exports, {
+    get AdoptionProvider () {
+        return AdoptionProvider;
+    },
+    get default () {
+        return _default;
+    },
+    get useAdoption () {
+        return useAdoption;
+    }
+});
+var _async_to_generator = __webpack_require__(/*! @swc/helpers/_/_async_to_generator */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_async_to_generator.cjs");
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _interop_require_wildcard = __webpack_require__(/*! @swc/helpers/_/_interop_require_wildcard */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_wildcard.cjs");
+var _sliced_to_array = __webpack_require__(/*! @swc/helpers/_/_sliced_to_array */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_sliced_to_array.cjs");
+var _to_consumable_array = __webpack_require__(/*! @swc/helpers/_/_to_consumable_array */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_to_consumable_array.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_wildcard._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _reactnative = __webpack_require__(/*! react-native */ "webpack/sharing/consume/default/react-native/react-native");
+var _asyncstorage = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! @react-native-async-storage/async-storage */ "webpack/sharing/consume/default/@react-native-async-storage/async-storage/@react-native-async-storage/async-storage"));
+// Create the context with a default value
+var AdoptionContext = /*#__PURE__*/ (0, _react.createContext)({
+    adoptedDogs: [],
+    addAdoptedDog: ()=>{},
+    removeAdoptedDog: ()=>{},
+    isAdopted: ()=>false
+});
+var useAdoption = ()=>(0, _react.useContext)(AdoptionContext);
+// Storage key for persisting adopted dogs
+var STORAGE_KEY = 'adoptedDogs';
+function AdoptionProvider(ref) {
+    var children = ref.children;
+    var _useState = _sliced_to_array._((0, _react.useState)([]), 2), adoptedDogs = _useState[0], setAdoptedDogs = _useState[1];
+    // Load adopted dogs from storage on mount
+    (0, _react.useEffect)(()=>{
+        var loadAdoptedDogs = ()=>_async_to_generator._(function*() {
+                try {
+                    var savedDogs = yield _asyncstorage.default.getItem(STORAGE_KEY);
+                    if (savedDogs) {
+                        setAdoptedDogs(JSON.parse(savedDogs));
+                    }
+                } catch (error) {
+                    console.error('Failed to load adopted dogs:', error);
+                    _reactnative.Alert.alert('Error', 'Failed to load adopted dogs');
+                }
+            })();
+        loadAdoptedDogs();
+    }, []);
+    // Save adopted dogs to storage whenever the list changes
+    (0, _react.useEffect)(()=>{
+        var saveAdoptedDogs = ()=>_async_to_generator._(function*() {
+                try {
+                    yield _asyncstorage.default.setItem(STORAGE_KEY, JSON.stringify(adoptedDogs));
+                } catch (error) {
+                    console.error('Failed to save adopted dogs:', error);
+                    _reactnative.Alert.alert('Error', 'Failed to save adopted dogs');
+                }
+            })();
+        if (adoptedDogs.length > 0) {
+            saveAdoptedDogs();
+        }
+    }, [
+        adoptedDogs
+    ]);
+    // Add a dog to the adopted list
+    var addAdoptedDog = (dog)=>{
+        // Check if dog is already adopted
+        if (!isAdopted(dog.nombre)) {
+            setAdoptedDogs((prev)=>_to_consumable_array._(prev).concat([
+                    dog
+                ]));
+        }
+    };
+    // Remove a dog from the adopted list
+    var removeAdoptedDog = (dogName)=>{
+        setAdoptedDogs((prev)=>prev.filter((dog)=>dog.nombre !== dogName));
+    };
+    // Check if a dog is already adopted
+    var isAdopted = (dogName)=>{
+        return adoptedDogs.some((dog)=>dog.nombre === dogName);
+    };
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(AdoptionContext.Provider, {
+        value: {
+            adoptedDogs,
+            addAdoptedDog,
+            removeAdoptedDog,
+            isAdopted
+        },
+        children: children
+    });
+}
+var _default = AdoptionContext;
+
+
+}),
+"./src/navigation/navigators/DrawerNavigator.tsx": 
+/*!*******************************************************!*\
+  !*** ./src/navigation/navigators/DrawerNavigator.tsx ***!
+  \*******************************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _object_spread = __webpack_require__(/*! @swc/helpers/_/_object_spread */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_object_spread.cjs");
+var _object_spread_props = __webpack_require__(/*! @swc/helpers/_/_object_spread_props */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_object_spread_props.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _drawer = __webpack_require__(/*! @react-navigation/drawer */ "webpack/sharing/consume/default/@react-navigation/drawer/@react-navigation/drawer");
+var _reactnative = __webpack_require__(/*! react-native */ "webpack/sharing/consume/default/react-native/react-native");
+var _MaterialCommunityIcons = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react-native-vector-icons/MaterialCommunityIcons */ "./node_modules/.pnpm/react-native-vector-icons@10.2.0/node_modules/react-native-vector-icons/MaterialCommunityIcons.js"));
+var _StackNavigatortsx = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ./StackNavigator.tsx */ "./src/navigation/navigators/StackNavigator.tsx"));
+var _HowItWorksScreentsx = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ../../screens/HowItWorksScreen.tsx */ "./src/screens/HowItWorksScreen.tsx"));
+var _constantsts = __webpack_require__(/*! ../constants.ts */ "./src/navigation/constants.ts");
+var Drawer = (0, _drawer.createDrawerNavigator)();
+// Custom drawer content component
+var CustomDrawerContent = (props)=>/*#__PURE__*/ (0, _jsxruntime.jsxs)(_drawer.DrawerContentScrollView, _object_spread_props._(_object_spread._({}, props), {
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                style: styles.drawerHeader,
+                children: [
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                        style: styles.drawerTitle,
+                        children: "Adopci\xf3n de Perros"
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                        style: styles.drawerSubtitle,
+                        children: "Encuentra tu compa\xf1ero ideal"
+                    })
+                ]
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(_drawer.DrawerItemList, _object_spread._({}, props))
+        ]
+    }));
+function DogIcon(ref) {
+    var color = ref.color, size = ref.size;
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_MaterialCommunityIcons.default, {
+        name: "dog",
+        size: size,
+        color: color,
+        style: styles.icon
+    });
+}
+function HelpIcon(ref) {
+    var color = ref.color, size = ref.size;
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_MaterialCommunityIcons.default, {
+        name: "help-circle",
+        size: size,
+        color: color,
+        style: styles.icon
+    });
+}
+function DrawerNavigator() {
+    return /*#__PURE__*/ (0, _jsxruntime.jsxs)(Drawer.Navigator, {
+        screenOptions: {
+            headerShown: false,
+            drawerActiveTintColor: '#28a745',
+            drawerInactiveTintColor: '#212529',
+            drawerLabelStyle: {
+                marginLeft: -16,
+                fontSize: 16
+            }
+        },
+        drawerContent: CustomDrawerContent,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(Drawer.Screen, {
+                name: _constantsts.Screens.Main.name,
+                component: _StackNavigatortsx.default,
+                options: {
+                    title: _constantsts.Screens.Main.title,
+                    drawerIcon: DogIcon
+                }
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(Drawer.Screen, {
+                name: _constantsts.Screens.HowItWorks.name,
+                component: _HowItWorksScreentsx.default,
+                options: {
+                    title: _constantsts.Screens.HowItWorks.title,
+                    drawerIcon: HelpIcon
+                }
+            })
+        ]
+    });
+}
+var styles = _reactnative.StyleSheet.create({
+    drawerHeader: {
+        padding: 16,
+        backgroundColor: '#f8f9fa',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e9ecef'
+    },
+    drawerTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#212529',
+        marginBottom: 4
+    },
+    drawerSubtitle: {
+        fontSize: 14,
+        color: '#6c757d'
+    },
+    icon: {
+        marginRight: 10
+    }
+});
+var _default = DrawerNavigator;
+
+
+}),
+"./src/navigation/navigators/StackNavigator.tsx": 
+/*!******************************************************!*\
+  !*** ./src/navigation/navigators/StackNavigator.tsx ***!
+  \******************************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _nativestack = __webpack_require__(/*! @react-navigation/native-stack */ "webpack/sharing/consume/default/@react-navigation/native-stack/@react-navigation/native-stack");
+var _TabNavigatortsx = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ./TabNavigator.tsx */ "./src/navigation/navigators/TabNavigator.tsx"));
+var _DogDetailsScreentsx = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ../../screens/DogDetailsScreen.tsx */ "./src/screens/DogDetailsScreen.tsx"));
+var _HowItWorksScreentsx = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ../../screens/HowItWorksScreen.tsx */ "./src/screens/HowItWorksScreen.tsx"));
+var _constantsts = __webpack_require__(/*! ../constants.ts */ "./src/navigation/constants.ts");
+// Create the stack navigator
+var Stack = (0, _nativestack.createNativeStackNavigator)();
+function StackNavigator() {
+    return /*#__PURE__*/ (0, _jsxruntime.jsxs)(Stack.Navigator, {
+        screenOptions: {
+            headerStyle: {
+                backgroundColor: '#ffffff'
+            },
+            headerTitleStyle: {
+                fontWeight: 'bold',
+                color: '#212529'
+            },
+            headerTintColor: '#28a745'
+        },
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(Stack.Screen, {
+                name: _constantsts.Screens.Home.name,
+                component: _TabNavigatortsx.default,
+                options: {
+                    headerShown: false
+                }
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(Stack.Screen, {
+                name: _constantsts.Screens.DogDetails.name,
+                component: _DogDetailsScreentsx.default,
+                options: (ref)=>{
+                    var route = ref.route;
+                    var _route_params_dog, _route_params;
+                    // Add error handling for the case where route.params or route.params.dog is undefined
+                    return {
+                        title: ((_route_params = route.params) === null || _route_params === void 0 ? void 0 : (_route_params_dog = _route_params.dog) === null || _route_params_dog === void 0 ? void 0 : _route_params_dog.nombre) ?? 'Detalles del perro'
+                    };
+                }
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(Stack.Screen, {
+                name: _constantsts.Screens.HowItWorks.name,
+                component: _HowItWorksScreentsx.default,
+                options: {
+                    title: _constantsts.Screens.HowItWorks.title
+                }
+            })
+        ]
+    });
+}
+var _default = StackNavigator;
+
+
+}),
+"./src/navigation/navigators/TabNavigator.tsx": 
+/*!****************************************************!*\
+  !*** ./src/navigation/navigators/TabNavigator.tsx ***!
+  \****************************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _interop_require_wildcard = __webpack_require__(/*! @swc/helpers/_/_interop_require_wildcard */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_wildcard.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_wildcard._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _bottomtabs = __webpack_require__(/*! @react-navigation/bottom-tabs */ "webpack/sharing/consume/default/@react-navigation/bottom-tabs/@react-navigation/bottom-tabs");
+var _MaterialCommunityIcons = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react-native-vector-icons/MaterialCommunityIcons */ "./node_modules/.pnpm/react-native-vector-icons@10.2.0/node_modules/react-native-vector-icons/MaterialCommunityIcons.js"));
+var _HomeScreentsx = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ../../screens/HomeScreen.tsx */ "./src/screens/HomeScreen.tsx"));
+var _AdoptedDogsScreentsx = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ../../screens/AdoptedDogsScreen.tsx */ "./src/screens/AdoptedDogsScreen.tsx"));
+var _native = __webpack_require__(/*! @react-navigation/native */ "webpack/sharing/consume/default/@react-navigation/native/@react-navigation/native");
+var _reactnative = __webpack_require__(/*! react-native */ "webpack/sharing/consume/default/react-native/react-native");
+var _constantsts = __webpack_require__(/*! ../constants.ts */ "./src/navigation/constants.ts");
+var Tab = (0, _bottomtabs.createBottomTabNavigator)();
+function AdoptarIcon(ref) {
+    var color = ref.color, size = ref.size;
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_MaterialCommunityIcons.default, {
+        name: "dog",
+        color: color,
+        size: size
+    });
+}
+function MisPerrosIcon(ref) {
+    var color = ref.color, size = ref.size;
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_MaterialCommunityIcons.default, {
+        name: "heart",
+        color: color,
+        size: size
+    });
+}
+function HeaderLeft(ref) {
+    var onPress = ref.onPress;
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.TouchableOpacity, {
+        style: styles.headerLeft,
+        onPress: onPress,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_MaterialCommunityIcons.default, {
+            name: "menu",
+            size: 24,
+            color: "#212529"
+        })
+    });
+}
+function TabNavigator() {
+    var navigation = (0, _native.useNavigation)();
+    var headerLeft = (0, _react.useCallback)(()=>/*#__PURE__*/ (0, _jsxruntime.jsx)(HeaderLeft, {
+            onPress: ()=>navigation.openDrawer()
+        }), [
+        navigation
+    ]);
+    return /*#__PURE__*/ (0, _jsxruntime.jsxs)(Tab.Navigator, {
+        screenOptions: {
+            tabBarActiveTintColor: '#28a745',
+            tabBarInactiveTintColor: '#6c757d',
+            tabBarLabelStyle: {
+                fontSize: 12,
+                fontWeight: '500'
+            },
+            tabBarStyle: {
+                borderTopWidth: 1,
+                borderTopColor: '#e9ecef',
+                elevation: 8,
+                shadowColor: '#000',
+                shadowOffset: {
+                    width: 0,
+                    height: -2
+                },
+                shadowOpacity: 0.1,
+                shadowRadius: 3
+            },
+            headerStyle: {
+                backgroundColor: '#ffffff',
+                elevation: 2,
+                shadowColor: '#000',
+                shadowOffset: {
+                    width: 0,
+                    height: 2
+                },
+                shadowOpacity: 0.1,
+                shadowRadius: 3
+            },
+            headerTitleStyle: {
+                fontWeight: 'bold',
+                color: '#212529'
+            },
+            headerLeft
+        },
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(Tab.Screen, {
+                name: _constantsts.Screens.Adoptar.name,
+                component: _HomeScreentsx.default,
+                options: {
+                    tabBarIcon: AdoptarIcon,
+                    title: _constantsts.Screens.Adoptar.title
+                }
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(Tab.Screen, {
+                name: _constantsts.Screens.MisPerros.name,
+                component: _AdoptedDogsScreentsx.default,
+                options: {
+                    tabBarIcon: MisPerrosIcon,
+                    title: _constantsts.Screens.MisPerros.title
+                }
+            })
+        ]
+    });
+}
+var styles = _reactnative.StyleSheet.create({
+    headerLeft: {
+        marginLeft: 16
+    }
+});
+var _default = TabNavigator;
+
+
+}),
+"./src/screens/AdoptedDogsScreen.tsx": 
+/*!*******************************************!*\
+  !*** ./src/screens/AdoptedDogsScreen.tsx ***!
+  \*******************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _reactnative = __webpack_require__(/*! react-native */ "webpack/sharing/consume/default/react-native/react-native");
+var _DogCard = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ../components/DogCard */ "./src/components/DogCard.tsx"));
+var _AdoptionContext = __webpack_require__(/*! ../context/AdoptionContext */ "./src/context/AdoptionContext.tsx");
+function AdoptedDogsScreen() {
+    // Get adopted dogs from context
+    var adoptedDogs = (0, _AdoptionContext.useAdoption)().adoptedDogs;
+    // Extract unique key for each item
+    var keyExtractor = (item, index)=>`${item.nombre}-${index}`;
+    // Render each dog card
+    var renderDogCard = (ref)=>{
+        var item = ref.item;
+        return /*#__PURE__*/ (0, _jsxruntime.jsx)(_DogCard.default, {
+            perro: item
+        });
+    };
+    // Render empty list component
+    var renderEmptyList = ()=>/*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+            style: styles.emptyContainer,
+            children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                style: styles.emptyText,
+                children: "No has adoptado ning\xfan perro todav\xeda"
+            })
+        });
+    return /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+        style: styles.container,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.StatusBar, {
+                barStyle: "dark-content",
+                backgroundColor: "#f8f9fa"
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+                style: styles.header,
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                    style: styles.title,
+                    children: "Mis Perros Adoptados"
+                })
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.FlatList, {
+                data: adoptedDogs,
+                keyExtractor: keyExtractor,
+                renderItem: renderDogCard,
+                contentContainerStyle: styles.listContent,
+                ListEmptyComponent: renderEmptyList,
+                showsVerticalScrollIndicator: false
+            })
+        ]
+    });
+}
+var styles = _reactnative.StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f8f9fa'
+    },
+    header: {
+        padding: 16,
+        backgroundColor: '#ffffff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e9ecef',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 12,
+        color: '#212529'
+    },
+    listContent: {
+        padding: 12,
+        paddingBottom: 24
+    },
+    emptyContainer: {
+        padding: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 300
+    },
+    emptyText: {
+        fontSize: 16,
+        color: '#6c757d',
+        textAlign: 'center'
+    }
+});
+var _default = AdoptedDogsScreen;
+
+
+}),
+"./src/screens/DogDetailsScreen.tsx": 
+/*!******************************************!*\
+  !*** ./src/screens/DogDetailsScreen.tsx ***!
+  \******************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _reactnative = __webpack_require__(/*! react-native */ "webpack/sharing/consume/default/react-native/react-native");
+var _native = __webpack_require__(/*! @react-navigation/native */ "webpack/sharing/consume/default/@react-navigation/native/@react-navigation/native");
+var _AdoptionContext = __webpack_require__(/*! ../context/AdoptionContext */ "./src/context/AdoptionContext.tsx");
+var _dogUtils = __webpack_require__(/*! ../utils/dogUtils */ "./src/utils/dogUtils.ts");
+function DogDetailsScreen() {
+    var _dog_raza;
+    var route = (0, _native.useRoute)();
+    var _useAdoption = (0, _AdoptionContext.useAdoption)(), addAdoptedDog = _useAdoption.addAdoptedDog, isAdopted = _useAdoption.isAdopted;
+    // Check if route.params exists and has a dog property
+    if (!route.params || !route.params.dog) {
+        console.error('No dog data in route params');
+        return /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+            style: styles.errorContainer,
+            children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                style: styles.errorText,
+                children: "Error: No se pudo cargar la informaci\xf3n del perro"
+            })
+        });
+    }
+    var dog = route.params.dog;
+    var adoptable = (0, _dogUtils.esAdoptable)(dog);
+    var alreadyAdopted = isAdopted(dog.nombre);
+    // Format dog age text
+    var ageText = !dog.edad ? 'Edad desconocida' : dog.edad === 1 ? "1 a\xf1o" : `${dog.edad} a\xf1os`;
+    // Handle adoption button press
+    var handleAdopt = ()=>{
+        if (!adoptable) {
+            _reactnative.Alert.alert("No disponible para adopci\xf3n", "Este perro no est\xe1 disponible para adopci\xf3n en este momento.", [
+                {
+                    text: 'Entendido'
+                }
+            ]);
+            return;
+        }
+        if (alreadyAdopted) {
+            _reactnative.Alert.alert('Ya adoptado', 'Ya has adoptado a este perro.', [
+                {
+                    text: 'Entendido'
+                }
+            ]);
+            return;
+        }
+        _reactnative.Alert.alert("Confirmar adopci\xf3n", `\xbfEst\xe1s seguro de que quieres adoptar a ${dog.nombre}?`, [
+            {
+                text: 'Cancelar',
+                style: 'cancel'
+            },
+            {
+                text: 'Adoptar',
+                onPress: ()=>{
+                    addAdoptedDog(dog);
+                    _reactnative.Alert.alert("\xa1Felicidades!", `Has adoptado a ${dog.nombre}. Puedes ver a tus perros adoptados en la secci\xf3n "Mis Perros".`, [
+                        {
+                            text: 'OK'
+                        }
+                    ]);
+                }
+            }
+        ]);
+    };
+    if (!dog.foto) {
+        return /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+            style: styles.emptyContainer,
+            children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                style: styles.emptyText,
+                children: "No se pudo cargar la informaci\xf3n del perro"
+            })
+        });
+    }
+    return /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.ScrollView, {
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Image, {
+                source: {
+                    uri: dog.foto
+                },
+                style: styles.image,
+                resizeMode: "cover"
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                style: styles.infoContainer,
+                children: [
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                        style: styles.name,
+                        children: dog.nombre
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                        style: styles.breed,
+                        children: dog.raza
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                        style: styles.age,
+                        children: ageText
+                    }),
+                    dog.distancia != null && /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+                        style: styles.distanceContainer,
+                        children: /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.Text, {
+                            style: styles.distanceText,
+                            children: [
+                                "A ",
+                                dog.distancia,
+                                " km de tu ubicaci\xf3n"
+                            ]
+                        })
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+                        style: styles.divider
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                        style: styles.statusContainer,
+                        children: [
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+                                style: [
+                                    styles.statusBadge,
+                                    adoptable ? styles.adoptableBadge : styles.notAdoptableBadge
+                                ],
+                                children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                    style: styles.statusText,
+                                    children: adoptable ? "Disponible para adopci\xf3n" : "No adoptable a\xfan"
+                                })
+                            }),
+                            !adoptable && 'motivo' in dog && /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.Text, {
+                                style: styles.reasonText,
+                                children: [
+                                    "Motivo: ",
+                                    dog.motivo === 'enfermo' ? "Est\xe1 enfermo" : 'Es muy joven'
+                                ]
+                            }),
+                            !adoptable && 'fechaDisponible' in dog && /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.Text, {
+                                style: styles.availableText,
+                                children: [
+                                    "Disponible a partir de: ",
+                                    dog.fechaDisponible
+                                ]
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+                        style: styles.divider
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.Text, {
+                        style: styles.sectionTitle,
+                        children: [
+                            "Sobre ",
+                            dog.nombre
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.Text, {
+                        style: styles.description,
+                        children: [
+                            dog.nombre,
+                            " es un perro de raza ",
+                            (_dog_raza = dog.raza) === null || _dog_raza === void 0 ? void 0 : _dog_raza.toLowerCase(),
+                            dog.edad ? ` de ${dog.edad} ${dog.edad === 1 ? "a\xf1o" : "a\xf1os"}` : '',
+                            ". Es un compa\xf1ero leal y cari\xf1oso que busca un hogar donde pueda recibir todo el amor que merece."
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.TouchableOpacity, {
+                        style: [
+                            styles.adoptButton,
+                            !adoptable || alreadyAdopted ? styles.disabledButton : null
+                        ],
+                        onPress: handleAdopt,
+                        disabled: !adoptable || alreadyAdopted,
+                        children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                            style: styles.adoptButtonText,
+                            children: alreadyAdopted ? 'Ya has adoptado a este perro' : adoptable ? 'Adoptar' : "No disponible para adopci\xf3n"
+                        })
+                    })
+                ]
+            })
+        ]
+    });
+}
+var styles = _reactnative.StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#ffffff'
+    },
+    image: {
+        width: '100%',
+        height: 300
+    },
+    infoContainer: {
+        padding: 16
+    },
+    name: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#212529',
+        marginBottom: 4
+    },
+    breed: {
+        fontSize: 18,
+        color: '#495057',
+        marginBottom: 4,
+        textTransform: 'capitalize'
+    },
+    age: {
+        fontSize: 16,
+        color: '#6c757d',
+        marginBottom: 8
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#e9ecef',
+        marginVertical: 16
+    },
+    statusContainer: {
+        marginTop: 4
+    },
+    statusBadge: {
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 20,
+        alignSelf: 'flex-start',
+        marginBottom: 8
+    },
+    adoptableBadge: {
+        backgroundColor: '#d4edda'
+    },
+    notAdoptableBadge: {
+        backgroundColor: '#f8d7da'
+    },
+    statusText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#212529'
+    },
+    reasonText: {
+        fontSize: 14,
+        color: '#dc3545',
+        marginTop: 4,
+        fontStyle: 'italic'
+    },
+    availableText: {
+        fontSize: 14,
+        color: '#0066cc',
+        marginTop: 4
+    },
+    distanceContainer: {
+        marginTop: 4,
+        flexDirection: 'row',
+        alignItems: 'center',
+        flexWrap: 'wrap'
+    },
+    distanceText: {
+        fontSize: 14,
+        color: '#0066cc',
+        fontWeight: '500'
+    },
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#212529',
+        marginBottom: 8
+    },
+    description: {
+        fontSize: 16,
+        color: '#495057',
+        lineHeight: 24,
+        marginBottom: 16
+    },
+    adoptButton: {
+        backgroundColor: '#28a745',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 16
+    },
+    disabledButton: {
+        backgroundColor: '#6c757d'
+    },
+    adoptButtonText: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24
+    },
+    errorText: {
+        fontSize: 16,
+        color: '#dc3545',
+        textAlign: 'center'
+    },
+    emptyContainer: {
+        padding: 24,
+        alignItems: 'center'
+    },
+    emptyText: {
+        fontSize: 16,
+        color: '#6c757d',
+        textAlign: 'center'
+    }
+});
+var _default = DogDetailsScreen;
+
+
+}),
+"./src/screens/HomeScreen.tsx": 
+/*!************************************!*\
+  !*** ./src/screens/HomeScreen.tsx ***!
+  \************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _reactnative = __webpack_require__(/*! react-native */ "webpack/sharing/consume/default/react-native/react-native");
+var _DogList = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! ../components/DogList */ "./src/components/DogList.tsx"));
+function HomeScreen() {
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+        style: styles.container,
+        testID: "home-screen-container",
+        children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_DogList.default, {})
+    });
+}
+var styles = _reactnative.StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f8f9fa'
+    }
+});
+var _default = HomeScreen;
+
+
+}),
+"./src/screens/HowItWorksScreen.tsx": 
+/*!******************************************!*\
+  !*** ./src/screens/HowItWorksScreen.tsx ***!
+  \******************************************/
+(function (__unused_webpack_module, exports, __webpack_require__) {
+Object.defineProperty(exports, "__esModule", ({
+    value: true
+}));
+Object.defineProperty(exports, "default", ({
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+}));
+var _interop_require_default = __webpack_require__(/*! @swc/helpers/_/_interop_require_default */ "./node_modules/.pnpm/@swc+helpers@0.5.17/node_modules/@swc/helpers/cjs/_interop_require_default.cjs");
+var _jsxruntime = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@19.0.0/node_modules/react/jsx-runtime.js");
+var _react = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react */ "webpack/sharing/consume/default/react/react"));
+var _reactnative = __webpack_require__(/*! react-native */ "webpack/sharing/consume/default/react-native/react-native");
+var _native = __webpack_require__(/*! @react-navigation/native */ "webpack/sharing/consume/default/@react-navigation/native/@react-navigation/native");
+var _reactnativesafeareacontext = __webpack_require__(/*! react-native-safe-area-context */ "webpack/sharing/consume/default/react-native-safe-area-context/react-native-safe-area-context");
+var _MaterialCommunityIcons = /*#__PURE__*/ _interop_require_default._(__webpack_require__(/*! react-native-vector-icons/MaterialCommunityIcons */ "./node_modules/.pnpm/react-native-vector-icons@10.2.0/node_modules/react-native-vector-icons/MaterialCommunityIcons.js"));
+function HowItWorksScreen() {
+    var navigation = (0, _native.useNavigation)();
+    return /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnativesafeareacontext.SafeAreaView, {
+        style: styles.container,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.StatusBar, {
+                barStyle: "dark-content",
+                backgroundColor: "#f8f9fa"
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.View, {
+                style: styles.header,
+                children: /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                    style: styles.headerRow,
+                    children: [
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.TouchableOpacity, {
+                            style: styles.menuButton,
+                            onPress: ()=>navigation.goBack(),
+                            testID: "back-button",
+                            children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_MaterialCommunityIcons.default, {
+                                name: "arrow-left",
+                                size: 24,
+                                color: "#212529"
+                            })
+                        }),
+                        /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                            style: styles.title,
+                            children: "\xbfC\xf3mo funciona la adopci\xf3n?"
+                        })
+                    ]
+                })
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.ScrollView, {
+                contentContainerStyle: styles.scrollContent,
+                children: [
+                    /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                        style: styles.section,
+                        children: [
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionTitle,
+                                children: "1. Explora nuestro cat\xe1logo"
+                            }),
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionText,
+                                children: 'En la pesta\xf1a "Adoptar" encontrar\xe1s todos los perros disponibles para adopci\xf3n. Puedes buscar por nombre y ordenarlos por cercan\xeda a tu ubicaci\xf3n.'
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                        style: styles.section,
+                        children: [
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionTitle,
+                                children: "2. Conoce a los perros"
+                            }),
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionText,
+                                children: "Toca en cualquier perro para ver m\xe1s detalles sobre \xe9l. Podr\xe1s ver su edad, raza, ubicaci\xf3n y si est\xe1 disponible para adopci\xf3n."
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                        style: styles.section,
+                        children: [
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionTitle,
+                                children: "3. Adopta un perro"
+                            }),
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionText,
+                                children: 'Si un perro est\xe1 disponible para adopci\xf3n, ver\xe1s un bot\xf3n "Adoptar" en su p\xe1gina de detalles. Al presionarlo, confirmar\xe1s tu intenci\xf3n de adoptar.'
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                        style: styles.section,
+                        children: [
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionTitle,
+                                children: "4. Gestiona tus adopciones"
+                            }),
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionText,
+                                children: 'En la pesta\xf1a "Mis Perros" podr\xe1s ver todos los perros que has adoptado. Esta lista se guarda autom\xe1ticamente, as\xed que no perder\xe1s tus adopciones aunque cierres la aplicaci\xf3n.'
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, _jsxruntime.jsxs)(_reactnative.View, {
+                        style: styles.section,
+                        children: [
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionTitle,
+                                children: "Perros no disponibles"
+                            }),
+                            /*#__PURE__*/ (0, _jsxruntime.jsx)(_reactnative.Text, {
+                                style: styles.sectionText,
+                                children: "Algunos perros no est\xe1n disponibles para adopci\xf3n inmediata. Esto puede deberse a que est\xe1n enfermos o son muy j\xf3venes. En estos casos, ver\xe1s la fecha a partir de la cual estar\xe1n disponibles."
+                            })
+                        ]
+                    })
+                ]
+            })
+        ]
+    });
+}
+var styles = _reactnative.StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f8f9fa'
+    },
+    scrollContent: {
+        paddingBottom: 24
+    },
+    header: {
+        padding: 16,
+        backgroundColor: '#ffffff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e9ecef',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3
+    },
+    headerRow: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    menuButton: {
+        marginRight: 16
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#212529',
+        flex: 1
+    },
+    section: {
+        backgroundColor: '#ffffff',
+        marginHorizontal: 16,
+        marginTop: 16,
+        padding: 16,
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1
+        },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#212529',
+        marginBottom: 8
+    },
+    sectionText: {
+        fontSize: 16,
+        color: '#495057',
+        lineHeight: 24
+    }
+});
+var _default = HowItWorksScreen;
+
+
+}),
+
+}]);//# sourceMappingURL=__federation_expose_App.chunk.bundle.map?platform=android
